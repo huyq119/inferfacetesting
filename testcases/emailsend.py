@@ -25,9 +25,9 @@ def sendMail(text):
 
     msg = MIMEMultipart()
 
-    att1 = MIMEText(open('homepage_result.xlsx', 'rb').read(), 'base64', 'gb2312')
+    att1 = MIMEText(text, 'base64', 'gb2312')
     att1["Content-Type"] = 'application/octet-stream'
-    att1["Content-Disposition"] = 'attachment; filename = "testresult.xlsx"'
+    att1["Content-Disposition"] = 'attachment; filename = "result.html"'
     msg.attach(att1)
 
     msg['Subject'] = subject
