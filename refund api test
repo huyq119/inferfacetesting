@@ -4,6 +4,12 @@ import requests
 import hashlib
 import types
 import json
+from email import encoders
+from email.header import Header
+from email.mime.text import MIMEText
+from email.utils import parseaddr, formataddr
+import smtplib,time
+
 
 def md5(str):
     if type(str) is types.StringType:
@@ -21,6 +27,11 @@ def sign_get(str):
     array_items.strip()
     sign = md5(array_items + "C3BofasVsQlfaj4R8KuPw7Jc")
     return  sign
+def _format_addr(s):
+    name, addr = parseaddr(s)
+    return formataddr(( \
+        Header(name, 'utf-8').encode(), \
+        addr.encode('utf-8') if isinstance(addr, unicode) else addr))
 
 url = "http://test.chinau.com.cn:8090/app/gateway.do"
 querystring_login = {"app_key":"1001001","service_type":"cn.com.chinau.user.login.register","version":"1.0","phone_info":"iOS,10.2,1280*1080" \
@@ -70,3 +81,23 @@ querystring_refund_detail["sign"] = sign_get(querystring_refund_detail)
 response_refund_detail = requests.request("POST",url,params=querystring_refund_detail)
 print (u"退款详情接口测试结果:" + response_refund_detail.text)
 
+# 输入Email地址和口令:
+from_addr = "huyuqi@chinau.cc"
+password = "huyuqi119+1"
+# 输入SMTP服务器地址:
+smtp_server = "smtp.ym.163.com"
+# 输入收件人地址:
+to_addr = "54234133@qq.com"
+
+msg = MIMEText(u"厉害this is test for email","plain","utf-8")
+msg['From'] = _format_addr(u'Python爱好者 <%s>' % from_addr)
+msg['To'] = _format_addr(u'管理员 <%s>' % to_addr)
+text_subject = u"退款接口测试报告 " + time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
+msg['Subject'] = Header(text_subject, 'utf-8').encode()
+
+
+server = smtplib.SMTP(smtp_server, 25) # SMTP协议默认端口是25
+server.set_debuglevel(1)
+server.login(from_addr, password)
+server.sendmail(from_addr, [to_addr], msg.as_string())
+server.quit()
