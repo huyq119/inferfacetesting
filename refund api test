@@ -1,0 +1,72 @@
+#!/usr/bin/python
+#  -*- coding: utf-8 -*-
+import requests
+import hashlib
+import types
+import json
+
+def md5(str):
+    if type(str) is types.StringType:
+        m = hashlib.md5()
+        m.update(str)
+        return m.hexdigest()
+    else:
+        return "ERROR"
+def sign_get(str):
+    items = str.items()
+    items.sort()
+    array_items = ""
+    for key, value in items:
+        array_items = array_items + value
+    array_items.strip()
+    sign = md5(array_items + "C3BofasVsQlfaj4R8KuPw7Jc")
+    return  sign
+
+url = "http://test.chinau.com.cn:8090/app/gateway.do"
+querystring_login = {"app_key":"1001001","service_type":"cn.com.chinau.user.login.register","version":"1.0","phone_info":"iOS,10.2,1280*1080" \
+    ,"mobile":"13301199951","password":"MkxMSS3iZy8=","op_type":"DL"}
+querystring_login["sign"] = sign_get(querystring_login)
+response = requests.request("POST", url, params=querystring_login)
+response_login = json.loads(response.text)
+print (u"登录接口测试结果:"+response.text)
+userid = response_login["userId"]
+usertoken = response_login["token"]
+
+querystring_refund_TK = {"app_key":"1001001", "service_type":"cn.com.chinau.order.refund", "version":"1.0", "phone_info":"iOS,10.2,1280*1080",\
+                         "user_id":"204", "token":"aab9c9b5-85e6-49fd-a62e-34dafbf5b373", "refund_type":"TK", "order_sn":"Req00002068N",\
+                         "goods_sn":"271772076215"}
+querystring_refund_TK["user_id"] = userid.encode("utf-8")
+querystring_refund_TK["token"] = usertoken.encode("utf-8")
+querystring_refund_TK["sign"] = sign_get(querystring_refund_TK)
+querystring_refund_TK["detail"] = "Req00002068N"
+response_refund_TK = requests.request("POST",url,params=querystring_refund_TK)
+print (u"申请退款接口测试结果:"+response_refund_TK.text)
+
+querystring_refund_TH = {"app_key":"1001001", "service_type":"cn.com.chinau.order.refund", "version":"1.0", "phone_info":"iOS,10.2,1280*1080",\
+                         "user_id":"204", "token":"aab9c9b5-85e6-49fd-a62e-34dafbf5b373", "refund_type":"TH", "order_sn":"Req00002074N",\
+                         "goods_sn":"271772076215","express_comp":"sf","express_no":"2323232232"}
+querystring_refund_TH["user_id"] = userid.encode("utf-8")
+querystring_refund_TH["token"] = usertoken.encode("utf-8")
+querystring_refund_TH["sign"] = sign_get(querystring_refund_TH)
+querystring_refund_TH["detail"] = "Req00002068N"
+response_refund_TH = requests.request("POST",url,params=querystring_refund_TH)
+print (u"申请退货接口测试结果:"+response_refund_TH.text)
+
+querystring_refund_PTJR = {"app_key":"1001001", "service_type":"cn.com.chinau.order.refund", "version":"1.0", "phone_info":"iOS,10.2,1280*1080",\
+                         "user_id":"204", "token":"aab9c9b5-85e6-49fd-a62e-34dafbf5b373", "refund_type":"PTJR", "order_sn":"Req00002068N",\
+                         "goods_sn":"271772076215"}
+querystring_refund_PTJR["user_id"] = userid.encode("utf-8")
+querystring_refund_PTJR["token"] = usertoken.encode("utf-8")
+querystring_refund_PTJR["sign"] = sign_get(querystring_refund_PTJR)
+querystring_refund_PTJR["detail"] = "Req00002068N"
+response_refund_PTJR = requests.request("POST",url,params=querystring_refund_PTJR)
+print (u"退款申请客服介入接口测试结果:"+response_refund_PTJR.text)
+
+querystring_refund_detail = {"app_key":"1001001", "service_type":"cn.com.chinau.refund.detail.query", "version":"1.0", "phone_info":"iOS,10.2,1280*1080",\
+                         "user_id":"204", "token":"aab9c9b5-85e6-49fd-a62e-34dafbf5b373", "order_sn":"Req00002074N"}
+querystring_refund_detail["user_id"] = userid.encode("utf-8")
+querystring_refund_detail["token"] = usertoken.encode("utf-8")
+querystring_refund_detail["sign"] = sign_get(querystring_refund_detail)
+response_refund_detail = requests.request("POST",url,params=querystring_refund_detail)
+print (u"退款详情接口测试结果:" + response_refund_detail.text)
+
