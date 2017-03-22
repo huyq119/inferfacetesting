@@ -3,7 +3,7 @@
 import requests
 import xlsxwriter
 
-response = requests.post("http://124.205.39.212:8090/app/gateway.do?app_key=1001001&service_type=cn.com.chinau.homepage&version=0.5&phone_info=iOS%2C9.3.2%2C1280*1080&sign=3e681b94e19a9f544958c9995fa4e955")
+response = requests.post("http://test.chinau.com.cn:8090/app/gateway.do?app_key=1001001&service_type=cn.com.chinau.user.login.register&version=1.0&phone_info=iOS,10.2,1280*1080&mobile=13301199951&password=MkxMSS3iZy8=&op_type=DL&sign=143295b847b45e7784be6585fb26ec27")
 httpstatus = response.status_code
 if httpstatus == 200:
     text = response.json()
