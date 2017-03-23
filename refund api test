@@ -9,7 +9,7 @@ from email.header import Header
 from email.mime.text import MIMEText
 from email.utils import parseaddr, formataddr
 import smtplib,time
-
+from yattag import Doc
 
 def md5(str):
     if type(str) is types.StringType:
@@ -98,7 +98,12 @@ querystring_refund_detail["user_id"] = userid.encode("utf-8")
 querystring_refund_detail["token"] = usertoken.encode("utf-8")
 querystring_refund_detail["sign"] = sign_get(querystring_refund_detail)
 response_refund_detail = requests.request("POST",url,params=querystring_refund_detail)
-print (u"退款详情接口测试结果:" + response_refund_detail.text)
+response_refund_detail_json = json.loads(response_refund_detail.text)
+if response_refund_detail_json["rsp_code"] == "0000":
+    result_refund_detail = u"查看退款详情页接口测试成功: " +  response_refund_detail.text
+else:
+    result_refund_detail = u"查看退款详情页接口测试失败" + response_refund_detail.text
+print (result_refund_detail)
 
 # 输入Email地址和口令:
 from_addr = "huyuqi@chinau.cc"
@@ -107,7 +112,6 @@ password = "huyuqi119+1"
 smtp_server = "smtp.ym.163.com"
 # 输入收件人地址:
 to_addr = "54234133@qq.com"
-from yattag import Doc
 
 doc, tag, text = Doc().tagtext()
 
@@ -121,9 +125,10 @@ with tag('html'):
             text(result_refund_TH+"\r\n")
         with tag('p',id='sub3'):
             text(result_refund_PTJR+"\r\n")
+        with tag('p',id='sub4'):
+            text(result_refund_detail+"\r\n")
         with tag('a', href='http://192.168.51.32:8060/user-login-Lw==.html'):
             text(u'展示结果')
-
 result = doc.getvalue()
 
 msg = MIMEText(result,"html","utf-8")
