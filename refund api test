@@ -3,12 +3,13 @@
 import requests
 import hashlib
 import types
-import jsont
+import json
 from email import encoders
 from email.header import Header
 from email.mime.text import MIMEText
 from email.utils import parseaddr, formataddr
-import smtplib,time
+'''import smtplib'''
+import time
 from yattag import Doc
 
 f=open("testresult.txt","w")
